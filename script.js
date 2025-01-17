@@ -1,7 +1,9 @@
 function funcionGeneral(){
     calcularFrecuenciaLineal()
+    calcularFrecuenciaAngNat()
     calcularFrecuenciaAngAmort()
     tipoAmort()
+    graficarMAS()
     graficarMovAmort()
 } 
 
@@ -31,6 +33,21 @@ function calcularFrecuenciaLineal(){
 
     //Mostrar el resultado
     document.getElementById("frecuenciaL").innerText = frecuenciaL.toFixed(2);
+}
+
+function calcularFrecuenciaAngNat(){
+    //Obtener valores de los inputs
+    var masa = document.getElementById("masa").value;
+    var k = document.getElementById("k").value;
+    
+    masa = parseFloat(masa);  //Sobrescribo los valores que tomo del html y los cambio de fomato (convierte el texto a números con parseFloat)
+    k = parseFloat(k);
+
+    //Calcular la frecuencia angular natural (w = sqrt(k/m))
+    var frecuenciaAngNat = Math.sqrt(k/masa);
+    
+    //Mostrar el resultado
+    document.getElementById("frecuenciaAngNat").innerText = frecuenciaAngNat.toFixed(2);
 }
 
 function calcularFrecuenciaAngAmort(){
@@ -81,7 +98,71 @@ function tipoAmort(){
     document.getElementById("tipoAmort").innerText = tipoAmort;
 }
 
-var grafico = null;
+var grafico1 = null;
+function graficarMAS() {
+    // Obtener los valores de los inputs
+    var masa = document.getElementById("masa").value;
+    var k = document.getElementById("k").value;
+    
+    masa = parseFloat(masa);  //Sobrescribo los valores que tomo del html y los cambio de fomato (convierte el texto a números con parseFloat)
+    k = parseFloat(k);
+
+    //Calcular la frecuencia angular natural (w = sqrt(k/m))
+    var frecuenciaAngNat = Math.sqrt(k/masa);
+
+    // Parámetros iniciales
+    var A = 1; // Amplitud inicial
+    var phi = 0; // Fase inicial (puedes cambiar esto si quieres)
+
+    // Crear el array de tiempos y posiciones 
+var tiempos = []; 
+var posiciones = []; 
+for (var t = 0; t <= 20; t += 0.1) { // Graficar de 0 a 10 segundos 
+    tiempos.push(t); 
+    var x = A * Math.cos(frecuenciaAngNat * t + phi); // Ecuación del MAS 
+    posiciones.push(x); 
+} 
+ 
+// Crear el gráfico 
+var ctx = document.getElementById("grafico1").getContext("2d"); 
+
+if (grafico1) {
+    grafico1.destroy();
+}
+
+grafico1 = new Chart(ctx, { 
+    type: "line", 
+    data: { 
+        labels: tiempos, // Tiempo 
+        datasets: [{ 
+            label: "Posición x(t) del Movimiento sin Amortiguamiento", 
+            data: posiciones, // Posición x(t) 
+            borderColor: "rgb(75, 192, 192)", 
+            fill: false 
+        }] 
+    }, 
+    options: { 
+        responsive: true, 
+        scales: { 
+            x: { 
+                title: { 
+                    display: true, 
+                    text: "Tiempo (s)" 
+                } 
+            }, 
+            y: { 
+                title: { 
+                    display: true, 
+                    text: "Posición x(t)" 
+                } 
+            } 
+        } 
+    } 
+}); 
+
+} 
+
+var grafico2 = null;
 function graficarMovAmort() {
     // Obtener los valores de los inputs
     var masa = document.getElementById("masa").value;
@@ -104,7 +185,7 @@ function graficarMovAmort() {
     var tiempos = [];
     var posiciones = [];
     var t = 0; // Tiempo inicial
-    var epsilon = 0.01; // Tolerancia para detener el gráfico cuando la posición es cercana a cero
+    var epsilon = 0.001; // Tolerancia para detener el gráfico cuando la posición es cercana a cero
 
     // Bucle para generar los puntos hasta que la amplitud A sea pequeña
     while (true) {
@@ -125,15 +206,15 @@ function graficarMovAmort() {
     }
 
     // Obtener el contexto del canvas
-    var ctx = document.getElementById("grafico").getContext("2d");
+    var ctx = document.getElementById("grafico2").getContext("2d");
 
     // Destruir el gráfico existente si lo hay
-    if (grafico) {
-        grafico.destroy();
+    if (grafico2) {
+        grafico2.destroy();
     }
 
     // Crear el nuevo gráfico y asignarlo a la variable global
-    grafico = new Chart(ctx, {
+    grafico2 = new Chart(ctx, {
         type: "line",
         data: {
             labels: tiempos, // Tiempo
@@ -173,13 +254,22 @@ function clearInputField() {
     document.getElementById('frecuenciaAngAm').innerText = "";
     document.getElementById('tipoAmort').innerText = "";
     // Destruir el gráfico si existe
-    if (grafico) {
-        grafico.destroy();
-        grafico = null; // Reiniciar la variable global
+    if (grafico1) {
+        grafico1.destroy();
+        grafico1 = null; // Reiniciar la variable global
     }
+    
+    if (grafico2) {
+        grafico2.destroy();
+        grafico2 = null; // Reiniciar la variable global
+    }
+    
+    var canvas = document.getElementById("grafico1");
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Limpiar el canvas
-    var canvas = document.getElementById("grafico");
+    var canvas = document.getElementById("grafico2");
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
