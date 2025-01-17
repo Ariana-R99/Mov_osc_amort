@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cálculo de Frecuencia de Movimiento Amortiguado</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
+    
 </head>
 <body>
     <div class="container">
@@ -19,12 +21,8 @@
         <label for="b">Constante de amortiguamiento (kg/s):</label>
         <input type="number" id="b" required>
 
-        <button onclick="calcularFrecuenciaLineal()">Calcular Frecuencia Lineal</button>
-
-        <button onclick="calcularFrecuenciaAngAmort()">Calcular Frecuencia Angular Amortiguada</button>
-
-        <button onclick="tipoAmort()">Tipo de Amortiguamiento</button>
-
+        <button onclick="funcionGeneral()">Calcular</button>
+        
         <div id="resultado1">
             <p>Frecuencia: <span id="frecuenciaL"></span> Hz</p>
         </div>
@@ -36,8 +34,12 @@
         <div>
             <p><span id="tipoAmort"></span></p>
         </div>
-    </div>
 
+        <canvas id="grafico" width="600" height="400"></canvas>
+        
+        <button onclick="clearInputField()">Ingresar otros datos </button>
+    
     <script src="script.js"></script>
+    
 </body>
 </html>
