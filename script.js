@@ -1,4 +1,37 @@
-function funcionGeneral(){
+function validarEntradas() {
+    var masa = parseFloat(document.getElementById("masa").value);
+    var k = parseFloat(document.getElementById("k").value);
+    var b = parseFloat(document.getElementById("b").value);
+
+    // Verificar que los valores no sean NaN o inválidos
+    if (isNaN(masa) || isNaN(k) || isNaN(b)) {
+        alert("Por favor ingresa valores numéricos para masa, constante de rigidez y constante de amortiguamiento.");
+        return false;
+    }
+
+    // Validar rango de la constante de rigidez
+    if (k < 1 || k > 10000) {
+        alert("La constante de rigidez debe estar entre 1 y 10000 N/m.");
+        return false;
+    }
+
+    // Validar que la masa sea mayor a 0
+    if (masa <= 0) {
+        alert("La masa debe ser mayor a 0 kg.");
+        return false;
+    }
+
+    // Validar rango de la constante de amortiguamiento
+    if (b < 0.1 || b > 1000) {
+        alert("La constante de amortiguamiento debe estar entre 0.1 y 1000 Nm/s.");
+        return false;
+    }
+
+    return { masa, k, b };
+}
+
+function funcionGeneral() {
+    if (!validarEntradas()) return;
     calcularFrecuenciaLineal()
     calcularFrecuenciaAngNat()
     calcularFrecuenciaAngAmort()
@@ -8,20 +41,11 @@ function funcionGeneral(){
 } 
 
 function calcularFrecuenciaLineal(){
+    var { masa, k, b } = validarEntradas();
     //Obtener valores de los inputs
     var masa = document.getElementById("masa").value;
     var k = document.getElementById("k").value;
     var b = document.getElementById("b").value;
-
-    //Verificar que los valores sean válidos
-    if(masa === "" || k === "" || b === ""){
-        alert("Por favor ingresa la masa, la constante de rigidez y la constante de amortiguamiento.");
-        return;
-    }
-
-    masa = parseFloat(masa);  //Sobrescribo los valores que tomo del html y los cambio de fomato (convierte el texto a números con parseFloat)
-    k = parseFloat(k);
-    b = parseFloat(b);
 
     //Calcular la frecuencia angular amortiguada (w = sqrt((k/m)-(b/2m)^2)
     var factorRig = k/masa;
@@ -36,12 +60,7 @@ function calcularFrecuenciaLineal(){
 }
 
 function calcularFrecuenciaAngNat(){
-    //Obtener valores de los inputs
-    var masa = document.getElementById("masa").value;
-    var k = document.getElementById("k").value;
-    
-    masa = parseFloat(masa);  //Sobrescribo los valores que tomo del html y los cambio de fomato (convierte el texto a números con parseFloat)
-    k = parseFloat(k);
+    var { masa, k, b } = validarEntradas();
 
     //Calcular la frecuencia angular natural (w = sqrt(k/m))
     var frecuenciaAngNat = Math.sqrt(k/masa);
@@ -51,14 +70,7 @@ function calcularFrecuenciaAngNat(){
 }
 
 function calcularFrecuenciaAngAmort(){
-    //Obtener valores de los inputs
-    var masa = document.getElementById("masa").value;
-    var k = document.getElementById("k").value;
-    var b = document.getElementById("b").value;
-
-    masa = parseFloat(masa);  //Sobrescribo los valores que tomo del html y los cambio de fomato (convierte el texto a números con parseFloat)
-    k = parseFloat(k);
-    b = parseFloat(b);
+    var { masa, k, b } = validarEntradas();
 
     //Calcular la frecuencia angular amortiguada (w = sqrt((k/m)-(b/2m)^2)
     var factorRig = k/masa;
@@ -71,14 +83,7 @@ function calcularFrecuenciaAngAmort(){
 }
 
 function tipoAmort(){
-    //Obtener valores de los inputs
-    var masa = document.getElementById("masa").value;
-    var k = document.getElementById("k").value;
-    var b = document.getElementById("b").value;
-
-    masa = parseFloat(masa);  //Sobrescribo los valores que tomo del html y los cambio de fomato (convierte el texto a números con parseFloat)
-    k = parseFloat(k);
-    b = parseFloat(b);
+    var { masa, k, b } = validarEntradas();
 
     //Calcular factores de rigidez y amortiguamiento
     var factorRig = k/masa;
@@ -100,12 +105,7 @@ function tipoAmort(){
 
 var grafico1 = null;
 function graficarMAS() {
-    // Obtener los valores de los inputs
-    var masa = document.getElementById("masa").value;
-    var k = document.getElementById("k").value;
-    
-    masa = parseFloat(masa);  //Sobrescribo los valores que tomo del html y los cambio de fomato (convierte el texto a números con parseFloat)
-    k = parseFloat(k);
+    var { masa, k, b } = validarEntradas();
 
     //Calcular la frecuencia angular natural (w = sqrt(k/m))
     var frecuenciaAngNat = Math.sqrt(k/masa);
@@ -164,86 +164,133 @@ grafico1 = new Chart(ctx, {
 
 var grafico2 = null;
 function graficarMovAmort() {
-    // Obtener los valores de los inputs
-    var masa = document.getElementById("masa").value;
-    var k = document.getElementById("k").value;
-    var b = document.getElementById("b").value;
-
-    masa = parseFloat(masa);
-    k = parseFloat(k);
-    b = parseFloat(b);
+    var { masa, k, b } = validarEntradas();
 
     // Calcular la frecuencia angular amortiguada y el coeficiente de amortiguamiento
     var beta = b / (2 * masa); // Factor de amortiguamiento
     var omega = Math.sqrt(k / masa - Math.pow(b / (2 * masa), 2)); // Frecuencia angular amortiguada
 
-    // Parámetros iniciales
-    var A = 1; // Amplitud inicial
-    var phi = 0; // Fase inicial (puedes cambiar esto si quieres)
-
-    // Crear el array de tiempos y posiciones
-    var tiempos = [];
-    var posiciones = [];
-    var t = 0; // Tiempo inicial
-    var epsilon = 0.001; // Tolerancia para detener el gráfico cuando la posición es cercana a cero
-
-    // Bucle para generar los puntos hasta que la amplitud A sea pequeña
-    while (true) {
-        // Ecuación del movimiento amortiguado: x(t) = A * e^(-beta * t) * cos(omega * t + phi)
-        var x = A * Math.exp(-beta * t) * Math.cos(omega * t + phi); // Posición
-
-        // Si A * e^(-beta * t) < epsilon, detenemos el bucle
-        if (A * Math.exp(-beta * t) < epsilon) {
-            break;
+    //Calcular factores de rigidez y amortiguamiento
+    var factorRig = k/masa;
+    var factorAmort = Math.pow(b/(2*masa),2);
+    
+    if (factorRig > factorAmort) {
+        // Caso subamortiguado
+        var A = 1; // Amplitud inicial
+        var phi = 0; // Fase inicial
+    
+        // Crear el array de tiempos y posiciones
+        var tiempos = [];
+        var posiciones = [];
+        var t = 0;
+        var epsilon = 0.001; // Tolerancia para detener el gráfico cuando la posición es cercana a cero
+    
+        // Bucle para generar los puntos
+        while (true) {
+            var x = A * Math.exp(-beta * t) * Math.cos(omega * t + phi);
+    
+            if (A * Math.exp(-beta * t) < epsilon) break;
+    
+            tiempos.push(t);
+            posiciones.push(x);
+            t += 0.01;
         }
-        
-        // Agregar el tiempo y la posición al gráfico
-        tiempos.push(t);
-        posiciones.push(x);
-
-        // Incrementar el tiempo para el siguiente cálculo
-        t += 0.01; // Puedes ajustar el paso de tiempo aquí
-    }
-
-    // Obtener el contexto del canvas
-    var ctx = document.getElementById("grafico2").getContext("2d");
-
-    // Destruir el gráfico existente si lo hay
-    if (grafico2) {
-        grafico2.destroy();
-    }
-
-    // Crear el nuevo gráfico y asignarlo a la variable global
-    grafico2 = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: tiempos, // Tiempo
-            datasets: [{
-                label: "Posición x(t) del Movimiento Amortiguado",
-                data: posiciones, // Posición x(t)
-                borderColor: "rgb(75, 192, 192)",
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: "Tiempo (s)"
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: "Posición x(t)"
-                    }
+    
+        // Graficar
+        var ctx = document.getElementById("grafico2").getContext("2d");
+        if (grafico2) grafico2.destroy();
+        grafico2 = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: tiempos,
+                datasets: [{
+                    label: "Posición x(t) del Movimiento Amortiguado",
+                    data: posiciones,
+                    borderColor: "rgb(255, 99, 132)",
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: "Tiempo (s)" } },
+                    y: { title: { display: true, text: "Posición x(t)" } }
                 }
             }
+        });
+    
+    } else {
+        // Caso sobreamortiguado o crítico
+        function ode(t, state) {
+            const x = state[0];
+            const v = state[1];
+            return [
+                v,
+                -(b / masa) * v - (k / masa) * x
+            ];
         }
-    });
-}
+    
+        function rungeKuttaSystem(f, t0, state0, h, endT) {
+            let result = [{ t: t0, state: state0 }];
+            let t = t0;
+            let state = state0;
+            while (t < endT) {
+                const k1 = f(t, state).map((v) => h * v);
+                const k2 = f(
+                    t + 0.5 * h,
+                    state.map((s, i) => s + 0.5 * k1[i])
+                ).map((v) => h * v);
+                const k3 = f(
+                    t + 0.5 * h,
+                    state.map((s, i) => s + 0.5 * k2[i])
+                ).map((v) => h * v);
+                const k4 = f(
+                    t + h,
+                    state.map((s, i) => s + k3[i])
+                ).map((v) => h * v);
+    
+                state = state.map(
+                    (s, i) => s + (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) / 6
+                );
+                t += h;
+                result.push({ t: t, state: [...state] });
+            }
+            return result;
+        }
+    
+        const t0 = 0;
+        const state0 = [1, 0];
+        const stepSize = 0.1;
+        const endT = 10;
+    
+        const solution = rungeKuttaSystem(ode, t0, state0, stepSize, endT);
+    
+        const tiempos = solution.map(({ t }) => t);
+        const posiciones = solution.map(({ state }) => state[0]);
+    
+        var ctx = document.getElementById("grafico2").getContext("2d");
+        if (grafico2) grafico2.destroy();
+        grafico2 = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: tiempos,
+                datasets: [{
+                    label: "Posición x(t) del Movimiento Amortiguado",
+                    data: posiciones,
+                    borderColor: "rgb(255, 99, 132)",
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: "Tiempo (s)" } },
+                    y: { title: { display: true, text: "Posición x(t)" } }
+                }
+            }
+        });
+    }
+}  
 
 function clearInputField() {
     document.getElementById('masa').value = "";
