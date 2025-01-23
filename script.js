@@ -42,18 +42,11 @@ function funcionGeneral() {
 
 function calcularFrecuenciaLineal(){
     var { masa, k, b } = validarEntradas();
-    //Obtener valores de los inputs
-    var masa = document.getElementById("masa").value;
-    var k = document.getElementById("k").value;
-    var b = document.getElementById("b").value;
-
-    //Calcular la frecuencia angular amortiguada (w = sqrt((k/m)-(b/2m)^2)
-    var factorRig = k/masa;
-    var factorAmort = Math.pow(b/(2*masa),2);
-    var frecuenciaAngAm = Math.sqrt(factorRig-factorAmort);
+    //Calcular la frecuencia angular natural (w = sqrt(k/m))
+    var frecuenciaAngNat = Math.sqrt(k/masa);
 
     //Calcular la frecuencia lineal (f = w/2pi)
-    var frecuenciaL = frecuenciaAngAm/(2*Math.PI);
+    var frecuenciaL = frecuenciaAngNat/(2*Math.PI);
 
     //Mostrar el resultado
     document.getElementById("frecuenciaL").innerText = frecuenciaL.toFixed(2);
@@ -72,14 +65,16 @@ function calcularFrecuenciaAngNat(){
 function calcularFrecuenciaAngAmort(){
     var { masa, k, b } = validarEntradas();
 
-    //Calcular la frecuencia angular amortiguada (w = sqrt((k/m)-(b/2m)^2)
-    var factorRig = k/masa;
-    var factorAmort = Math.pow(b/(2*masa),2);
-    var frecuenciaAngAm = Math.sqrt(factorRig-factorAmort);
+    var factorRig = k / masa;
+    var factorAmort = Math.pow(b / (2 * masa), 2);
+    var elementoResultado = document.getElementById("frecuenciaAngAm");
 
-    
-    //Mostrar el resultado
-    document.getElementById("frecuenciaAngAm").innerText = frecuenciaAngAm.toFixed(2);
+    if (factorRig < factorAmort) {
+        elementoResultado.innerText = "El sistema es sobreamortiguado, por lo cual, no oscila y no existe frecuencia angular amortiguada en ";
+    } else {
+        var frecuenciaAngAm = Math.sqrt(factorRig - factorAmort);
+        elementoResultado.innerText = frecuenciaAngAm.toFixed(2);
+    }
 }
 
 function tipoAmort(){
@@ -298,6 +293,7 @@ function clearInputField() {
     document.getElementById('b').value = "";
     document.querySelectorAll('.result');
     document.getElementById('frecuenciaL').innerText = "";
+    document.getElementById('frecuenciaAngNat').innerText = "";
     document.getElementById('frecuenciaAngAm').innerText = "";
     document.getElementById('tipoAmort').innerText = "";
     // Destruir el gráfico si existe
