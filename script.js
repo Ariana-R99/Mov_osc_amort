@@ -278,6 +278,10 @@ function graficarMovAmort() {
             },
             options: {
                 responsive: true,
+                animation: {
+                    duration: 1500, // Duración en milisegundos
+                    easing: "linear", // Tipo de animación
+                },
                 scales: {
                     x: { title: { display: true, text: "Tiempo (s)" } },
                     y: { title: { display: true, text: "Posición x(t)" } }

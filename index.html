@@ -6,47 +6,102 @@
     <title>Cálculo de Frecuencia de Movimiento Amortiguado</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/numeric"></script>
-    <link rel="stylesheet" href="style.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #74b9ff, #a29bfe);
+            color: #fff;
+        }
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #2d3436;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary {
+            background-color: #0984e3;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #74b9ff;
+        }
+        .btn-secondary {
+            background-color: #6c5ce7;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #a29bfe;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cálculo de la Frecuencia de un Sistema Amortiguado</h1>
-
-        <label for="masa">Masa (kg):</label>
-        <input type="number" id="masa" required>
-
-        <label for="k">Constante de rigidez (N/m):</label>
-        <input type="number" id="k" required>
-
-        <label for="b">Constante de amortiguamiento (Nm/s):</label>
-        <input type="number" id="b" required>
-
-        <button onclick="funcionGeneral()">Calcular</button>
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Cálculo de la Frecuencia de un Sistema Amortiguado</h1>
         
-        <div id="resultado1">
-            <p>Frecuencia: <span id="frecuenciaL"></span> Hz</p>
+        <!-- Formulario de entrada -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="masa" class="form-label">Masa (kg):</label>
+                <input type="number" id="masa" class="form-control" placeholder="Ingresa la masa" required>
+            </div>
+            <div class="col-md-4">
+                <label for="k" class="form-label">Constante de rigidez (N/m):</label>
+                <input type="number" id="k" class="form-control" placeholder="Ingresa la constante de rigidez" required>
+            </div>
+            <div class="col-md-4">
+                <label for="b" class="form-label">Constante de amortiguamiento (Nm/s):</label>
+                <input type="number" id="b" class="form-control" placeholder="Ingresa la constante de amortiguamiento" required>
+            </div>
         </div>
 
-        <div id="resultado2">
-            <p>Frecuencia Angular Natural: <span id="frecuenciaAngNat"></span> rad/s</p>
+        <!-- Botones -->
+        <div class="row mb-4">
+            <div class="col text-center">
+                <button class="btn btn-primary me-2" onclick="funcionGeneral()">Calcular</button>
+                <button class="btn btn-secondary" onclick="clearInputField()">Reiniciar</button>
+            </div>
         </div>
 
-        <div id="resultado3">
-            <p>Frecuencia Angular Amortiguada: <span id="frecuenciaAngAm"></span> rad/s</p>
+        <!-- Resultados -->
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mb-3 text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Resultados</h5>
+                        <p>Frecuencia Lineal: <span id="frecuenciaL" class="fw-bold"></span> Hz</p>
+                        <p>Frecuencia Angular Natural: <span id="frecuenciaAngNat" class="fw-bold"></span> rad/s</p>
+                        <p>Frecuencia Angular Amortiguada: <span id="frecuenciaAngAm" class="fw-bold"></span> rad/s</p>
+                        <p>Tipo de Amortiguamiento: <span id="tipoAmort" class="fw-bold"></span></p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <p><span id="tipoAmort"></span></p>
+        <!-- Gráficos -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header text-center">Gráfico del Movimiento Sin Amortiguamiento</div>
+                    <div class="card-body">
+                        <canvas id="grafico1" width="600" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header text-center">Gráfico del Movimiento Amortiguado</div>
+                    <div class="card-body">
+                        <canvas id="grafico2" width="600" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <canvas id="grafico1" width="600" height="400"></canvas>
-        
-        <canvas id="grafico2" width="600" height="400"></canvas>
-        
-        <button onclick="clearInputField()">Ingresar otros datos </button>
-    
     <script src="script.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
